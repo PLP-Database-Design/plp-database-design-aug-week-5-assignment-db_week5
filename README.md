@@ -94,6 +94,79 @@ Create a ```GET``` endpoint that retrieves all patients by their first name
 Create a ```GET``` endpoint that retrieves all providers by their specialty
 
 <br>
+JavaScript
+const express = require('express');
+const mysql = require('mysql2');
+const dotenv = require('dotenv');
 
+dotenv.config(); // Load environment variables from .env
+
+// Create a connection pool to the MySQL database
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USERNAME,   
+
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+});
+
+const app = express();
+const   
+ port = 3000;
+
+// Endpoint to retrieve all patients
+app.get('/patients', (req, res) => {
+  pool.query('SELECT patient_id, first_name, last_name, date_of_birth FROM patients', (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+// Endpoint to retrieve all providers
+app.get('/providers', (req, res) => {
+  pool.query('SELECT first_name, last_name, provider_specialty FROM providers', (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+// Endpoint to filter patients by first name
+app.get('/patients/:firstName', (req, res) => {
+  const firstName = req.params.firstName;
+  pool.query('SELECT patient_id, first_name, last_name, date_of_birth FROM patients WHERE first_name = ?', [firstName], (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+// Endpoint to retrieve providers by specialty
+app.get('/providers/:specialty', (req, res) => {
+  const specialty = req.params.specialty;
+  pool.query('SELECT first_name, last_name, provider_specialty FROM providers WHERE provider_specialty = ?', [specialty], (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);   
+
+});
 
 ## NOTE: Do not fork this repository
