@@ -16,7 +16,7 @@ const db = mysql.createConnection({
 // Connect to database
 db.connect((err) => {
     if(err) {
-        throw err;
+        console.log('Error connecting to database');
     }
     console.log('Connected to database');
 });
@@ -70,5 +70,5 @@ app.get('/providers/specialty/:specialty', (req, res) => {
 
 
 app.listen(process.env.PORT || 3000, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${process.env.PORT}`);
 });
